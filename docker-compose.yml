@@ -15,7 +15,6 @@ services:
     networks:
       - network
     depends_on:
-      - redis
       - postgres
   postgres:
     image: postgres:13-alpine
