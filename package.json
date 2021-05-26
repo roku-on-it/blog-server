@@ -21,7 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^7.6.15",
+    "@nestjs-query/query-graphql": "^0.27.0",
+    "@nestjs/common": "^7.6.17",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.15",
     "@nestjs/graphql": "^7.10.6",
@@ -30,8 +31,10 @@
     "apollo-server-express": "^2.24.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "dataloader": "^2.0.0",
     "dotenv": "^10.0.0",
     "graphql": "^15.5.0",
+    "graphql-subscriptions": "^1.2.1",
     "graphql-tools": "^7.0.5",
     "joi": "^17.4.0",
     "pg": "^8.6.0",
