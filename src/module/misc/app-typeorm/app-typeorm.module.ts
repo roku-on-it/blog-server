@@ -16,7 +16,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
         username: config.get('POSTGRES_USER'),
         password: config.get('POSTGRES_PASSWORD'),
         database: config.get('POSTGRES_DATABASE'),
-        entities: ['dist/**/entity/*.{ts,js}'],
+        entities: ['dist/**/model/*.{ts,js}'],
         dropSchema: /true/i.test(config.get('DB_DROP_SCHEMA')),
         synchronize: /true/i.test(config.get('DB_SYNCHRONIZE')),
         logging: /true/i.test(config.get('DB_LOGGING')),
