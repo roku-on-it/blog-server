@@ -1,0 +1,96 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Category {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: ID!
+  language: LanguageType!
+  name: String!
+  posts(filter: ListPost): [Post!]
+  updatedAt: DateTime!
+}
+
+input CreateCategory {
+  language: LanguageType!
+  name: String!
+}
+
+input CreatePost {
+  category: RefInput!
+  content: String!
+  sources: [String!]
+  title: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DeleteCategory {
+  id: ID!
+}
+
+input DeletePost {
+  id: ID!
+}
+
+enum LanguageType {
+  EN
+  TR
+}
+
+input ListCategory {
+  language: LanguageType!
+  query: String
+}
+
+input ListPost {
+  query: String
+}
+
+type Mutation {
+  createCategory(payload: CreateCategory!): Category!
+  createPost(payload: CreatePost!): Post!
+  deleteCategory(payload: DeleteCategory!): Category!
+  deletePost(payload: DeletePost!): Post!
+  updateCategory(payload: UpdateCategory!): Category!
+  updatePost(payload: UpdatePost!): Post!
+}
+
+type Post {
+  category: Category!
+  content: String!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: ID!
+  sources: [String!]
+  title: String!
+  updatedAt: DateTime!
+}
+
+type Query {
+  categories(filter: ListCategory): [Category!]!
+  category(id: Float!): Post!
+  post(id: Float!): Post!
+  posts(filter: ListPost): [Post!]!
+}
+
+input RefInput {
+  id: ID!
+}
+
+input UpdateCategory {
+  id: ID!
+  name: String
+}
+
+input UpdatePost {
+  category: RefInput
+  content: String
+  id: ID!
+  sources: [String!]
+  title: String
+}
