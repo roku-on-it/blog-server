@@ -16,6 +16,13 @@ services:
       - network
     depends_on:
       - postgres
+      - redis
+  redis:
+    image: redis:6.2-alpine
+    networks:
+      - network
+    ports:
+      - 6379:${STORE_PORT}
   postgres:
     image: postgres:13-alpine
     networks:

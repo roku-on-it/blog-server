@@ -7,6 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
       cors: false,
       sortSchema: true,
       autoSchemaFile: 'schema.gql',
+      context: ({ req }) => ({ headers: req.headers }),
     }),
   ],
   exports: [GraphQLModule],
