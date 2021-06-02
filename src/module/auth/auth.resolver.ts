@@ -1,5 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { AuthService } from 'src/module/auth/auth.service';
+import { AuthService } from 'src/module/auth/service/auth.service';
 import { plainToClass } from 'class-transformer';
 import { User } from 'src/module/user/model/user';
 import { JwtResponse } from 'src/module/auth/model/jwt-response';

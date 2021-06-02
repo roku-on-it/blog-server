@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/module/user/user.module';
-import { AuthService } from 'src/module/auth/auth.service';
+import { AuthService } from 'src/module/auth/service/auth.service';
 import { JwtStrategy } from 'src/module/auth/guard/jwt.strategy';
 import { RoleGuard } from 'src/module/auth/guard/role.guard';
 import { JwtGuard } from 'src/module/auth/guard/jwt.guard';
