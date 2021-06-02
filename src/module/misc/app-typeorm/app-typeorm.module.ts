@@ -7,6 +7,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (
         config: ConfigService,
       ): Promise<PostgresConnectionOptions> => ({
@@ -21,7 +22,6 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
         synchronize: /true/i.test(config.get('DB_SYNCHRONIZE')),
         logging: /true/i.test(config.get('DB_LOGGING')),
       }),
-      inject: [ConfigService],
     }),
   ],
   exports: [TypeOrmModule],
