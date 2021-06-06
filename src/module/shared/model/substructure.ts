@@ -73,7 +73,7 @@ export class Substructure extends BaseEntity {
 
     return super.findOneOrFail(...args).catch((error) => {
       if (error instanceof EntityNotFoundError) {
-        throw new NotFoundException();
+        throw new NotFoundException(this.name + ' not found');
       }
 
       throw error;
@@ -87,7 +87,7 @@ export class Substructure extends BaseEntity {
     const entity = await this.findOne(id);
 
     if (null == entity) {
-      throw new NotFoundException(this.name);
+      throw new NotFoundException(this.name + ' not found');
     }
 
     await plainToClassFromExist(entity, payload).save();
