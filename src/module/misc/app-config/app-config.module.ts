@@ -7,7 +7,7 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       envFilePath: ['.env.dev', '.env'],
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').default('dev'),
+        NODE_ENV: Joi.string().valid('dev', 'prod').default('prod'),
         SERVER_PORT: Joi.number().greater(1024).required(),
         SERVER_HOST: Joi.string().required(),
         POSTGRES_HOST: Joi.string().required(),

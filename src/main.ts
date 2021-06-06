@@ -14,7 +14,10 @@ async function bootstrap() {
   const configService: ConfigService = app.get(ConfigService);
 
   const RedisStore = connectRedis(session);
-  const redisClient = redis.createClient({ db: 1 });
+  const redisClient = redis.createClient({
+    db: 1,
+    host: configService.get('STORE_HOST'),
+  });
 
   app.use(
     session({

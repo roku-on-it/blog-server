@@ -15,7 +15,7 @@ import { RegisterConsumer } from 'src/module/auth/service/consumer/register.cons
         configService: ConfigService,
       ): Promise<QueueOptions> => ({
         redis: {
-          host: configService.get('STORE_POST'),
+          host: configService.get('STORE_HOST'),
           port: configService.get('STORE_PORT'),
         },
         defaultJobOptions: {

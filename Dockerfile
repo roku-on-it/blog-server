@@ -1,5 +1,5 @@
 # DEVELOPMENT
-FROM node:14.15.4-alpine as dev
+FROM node:14.16.1-alpine as dev
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN rm -rf dist
 RUN npm run build
 
 # PRODUCTION
-FROM node:14.15.4-alpine as prod
+FROM node:14.16.1-alpine as prod
 
 ARG NODE_ENV=prod
 ENV NODE_ENV=${NODE_ENV}

@@ -48,11 +48,6 @@ input DeleteUser {
   id: ID!
 }
 
-type Errors {
-  message: String!
-  name: String!
-}
-
 enum LanguageType {
   EN
   TR
