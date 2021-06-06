@@ -25,6 +25,7 @@ input CreatePost {
 }
 
 input CreateUser {
+  confirmPassword: String!
   fullName: String!
   password: String!
   username: String!
@@ -43,8 +44,13 @@ input DeletePost {
   id: ID!
 }
 
-type JwtResponse {
-  token: String!
+input DeleteUser {
+  id: ID!
+}
+
+type Errors {
+  message: String!
+  name: String!
 }
 
 enum LanguageType {
@@ -61,6 +67,10 @@ input ListPost {
   query: String
 }
 
+input ListUser {
+  query: String
+}
+
 input LoginInput {
   password: String!
   username: String!
@@ -71,10 +81,14 @@ type Mutation {
   createPost(payload: CreatePost!): Post!
   deleteCategory(payload: DeleteCategory!): Category!
   deletePost(payload: DeletePost!): Post!
-  login(payload: LoginInput!): JwtResponse!
-  register(payload: CreateUser!): User!
+  deleteUser(payload: DeleteUser!): User!
+  login(payload: LoginInput!): User!
+  logout: Boolean!
+  register(payload: CreateUser!): RegisterResponse!
   updateCategory(payload: UpdateCategory!): Category!
+  updatePassword(payload: UpdateUserPassword!): User!
   updatePost(payload: UpdatePost!): Post!
+  updateUser(payload: UpdateUser!): User!
 }
 
 type Post {
@@ -96,10 +110,15 @@ type Query {
   post(id: Float!): Post!
   posts(filter: ListPost): [Post!]!
   user(id: Float!): User!
+  users(filter: ListUser): [User!]!
 }
 
 input RefInput {
   id: ID!
+}
+
+type RegisterResponse {
+  success: Boolean!
 }
 
 input UpdateCategory {
@@ -113,6 +132,20 @@ input UpdatePost {
   id: ID!
   sources: [String!]
   title: String
+}
+
+input UpdateUser {
+  fullName: String
+  id: ID!
+  role: UserRole
+  username: String
+}
+
+input UpdateUserPassword {
+  confirmNewPassword: String!
+  confirmPassword: String!
+  newPassword: String!
+  password: String!
 }
 
 type User {

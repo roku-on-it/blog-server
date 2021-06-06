@@ -1,21 +1,27 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { User } from 'src/module/user/model/user';
 import { UserRole } from 'src/module/user/model/enum/user-role';
+import { User } from 'src/module/user/model/user';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext) {
     const role = this.reflector.get<UserRole>('role', context.getHandler());
-    const user: User = GqlExecutionContext.create(context).getContext().user;
+    const session =
+      GqlExecutionContext.create(context).getContext().req.session;
 
     if (null == role) {
-      return true;
+      return null != session.userId;
     }
 
+    if (null == session.userId) {
+      return false;
+    }
+
+    const user = await User.findOneOrFail(session.userId);
     return user.role >= role;
   }
 }

@@ -12,7 +12,6 @@ import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import { DeleteCategory } from 'src/module/category/input/delete-category';
 import { UpdateCategory } from 'src/module/category/input/update-category';
 import { Post } from 'src/module/post/model/post';
-import { NotFoundException } from '@nestjs/common';
 import { ListPost } from 'src/module/post/input/list-post';
 import { ListCategory } from 'src/module/category/input/list-category';
 
@@ -20,12 +19,7 @@ import { ListCategory } from 'src/module/category/input/list-category';
 export class CategoryResolver {
   @Query(() => Post)
   async category(@Args('id') id: number): Promise<Category> {
-    const category = await Category.findOne(id);
-    if (null == category) {
-      throw new NotFoundException();
-    }
-
-    return category;
+    return await Category.findOneOrFail({ id });
   }
 
   @Query(() => [Category])

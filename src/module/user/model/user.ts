@@ -1,12 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Substructure } from 'src/module/shared/model/substructure';
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, Entity, Index, OneToMany } from 'typeorm';
 import { Post } from 'src/module/post/model/post';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { hash } from 'bcrypt';
 
 @ObjectType()
 @Entity()
+@Index(['username'], { unique: true })
 export class User extends Substructure {
   @Field()
   @Column()
@@ -28,8 +29,7 @@ export class User extends Substructure {
   posts: Post[];
 
   @BeforeInsert()
-  @BeforeUpdate()
-  private async hashPassword() {
-    this.password = await hash(this.password, 14);
+  private async beforeWrite() {
+    this.password = await hash(this.password, 12);
   }
 }

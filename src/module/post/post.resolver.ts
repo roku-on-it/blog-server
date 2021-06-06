@@ -7,24 +7,19 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Post } from 'src/module/post/model/post';
-import { NotFoundException } from '@nestjs/common';
 import { Category } from 'src/module/category/model/category';
 import { CreatePost } from 'src/module/post/input/create-post';
-import { plainToClass, plainToClassFromExist } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { DeletePost } from 'src/module/post/input/delete-post';
 import { UpdatePost } from 'src/module/post/input/update-post';
 import { ListPost } from 'src/module/post/input/list-post';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Post)
 export class PostResolver {
   @Query(() => Post)
   async post(@Args('id') id: number): Promise<Post> {
-    const post = await Post.findOne(id);
-    if (null == post) {
-      throw new NotFoundException();
-    }
-
-    return post;
+    return await Post.findOneOrFail({ id });
   }
 
   @Query(() => [Post])
@@ -41,22 +36,13 @@ export class PostResolver {
 
   @Mutation(() => Post)
   async deletePost(@Args('payload') payload: DeletePost): Promise<Post> {
-    const post = await Post.findOne(payload.id);
-    if (null == post) {
-      throw new NotFoundException();
-    }
-
+    const post = await Post.findOneOrFail(payload.id);
     return post.softRemove();
   }
 
   @Mutation(() => Post)
   async updatePost(@Args('payload') payload: UpdatePost): Promise<Post> {
-    const post = await Post.findOne(payload.id);
-    if (null == post) {
-      throw new NotFoundException();
-    }
-
-    return plainToClassFromExist(post, payload).save();
+    return await Post.findOneAndUpdate(payload);
   }
 
   @ResolveField(() => Category)
@@ -64,7 +50,7 @@ export class PostResolver {
     const category = await Category.findOne(post.category);
 
     if (null == category) {
-      throw new NotFoundException();
+      throw new NotFoundException('Category not found');
     }
 
     return category;
