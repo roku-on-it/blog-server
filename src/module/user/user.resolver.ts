@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from 'src/module/user/model/user';
-import { CurrentUser } from 'src/module/shared/decorator/current-user';
+import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 import { UpdateUser } from 'src/module/user/input/update-user';
 import { Authorize } from 'src/module/auth/decorator/authorize';
 import { ListUser } from 'src/module/user/input/list-user';
@@ -10,6 +10,8 @@ import { UpdateUserPassword } from 'src/module/user/input/update-user-password';
 import { plainToClassFromExist } from 'class-transformer';
 import { AuthService } from 'src/module/auth/service/auth.service';
 import { hash } from 'bcrypt';
+import { Payload } from 'src/module/shared/decorator/param/payload';
+import { Id } from 'src/module/shared/decorator/param/id';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -17,7 +19,7 @@ export class UserResolver {
 
   @Query(() => User)
   @Authorize()
-  async user(@Args('id') id: number): Promise<User> {
+  async user(@Id() id: number): Promise<User> {
     return await User.findOneOrFail({ id });
   }
 
@@ -29,12 +31,12 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async updateUser(@Args('payload') payload: UpdateUser): Promise<User> {
+  async updateUser(@Payload() payload: UpdateUser): Promise<User> {
     return await User.findOneAndUpdate(payload);
   }
 
   @Mutation(() => User)
-  async deleteUser(@Args('payload') payload: DeleteUser): Promise<User> {
+  async deleteUser(@Payload() payload: DeleteUser): Promise<User> {
     const user = await User.findOneOrFail(payload.id);
 
     if (null == user) {
@@ -56,7 +58,7 @@ export class UserResolver {
   @Authorize()
   async updatePassword(
     @CurrentUser() user: User,
-    @Args('payload') payload: UpdateUserPassword,
+    @Payload() payload: UpdateUserPassword,
   ): Promise<User> {
     const passMatch = await this.authService.comparePasswords(
       payload.password,

@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsPassword } from 'src/module/shared/decorator/is-password';
-import { Match } from 'src/module/shared/decorator/match';
+import { IsPassword } from 'src/module/shared/decorator/validator/is-password';
+import { Match } from 'src/module/shared/decorator/validator/match';
 
 @InputType()
 export class UpdateUserPassword {

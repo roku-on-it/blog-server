@@ -14,11 +14,13 @@ import { UpdateCategory } from 'src/module/category/input/update-category';
 import { Post } from 'src/module/post/model/post';
 import { ListPost } from 'src/module/post/input/list-post';
 import { ListCategory } from 'src/module/category/input/list-category';
+import { Payload } from 'src/module/shared/decorator/param/payload';
+import { Id } from 'src/module/shared/decorator/param/id';
 
 @Resolver(() => Category)
 export class CategoryResolver {
   @Query(() => Post)
-  async category(@Args('id') id: number): Promise<Category> {
+  async category(@Id() id: number): Promise<Category> {
     return await Category.findOneOrFail({ id });
   }
 
@@ -30,24 +32,18 @@ export class CategoryResolver {
   }
 
   @Mutation(() => Category)
-  async createCategory(
-    @Args('payload') payload: CreateCategory,
-  ): Promise<Category> {
+  async createCategory(@Payload() payload: CreateCategory): Promise<Category> {
     return plainToClass(Category, payload).save();
   }
 
   @Mutation(() => Category)
-  async deleteCategory(
-    @Args('payload') payload: DeleteCategory,
-  ): Promise<Category> {
+  async deleteCategory(@Payload() payload: DeleteCategory): Promise<Category> {
     const category = await Category.findOne(payload.id);
     return category.softRemove();
   }
 
   @Mutation(() => Category)
-  async updateCategory(
-    @Args('payload') payload: UpdateCategory,
-  ): Promise<Category> {
+  async updateCategory(@Payload() payload: UpdateCategory): Promise<Category> {
     const category = await Category.findOne(payload.id);
     return plainToClassFromExist(category, payload).save();
   }

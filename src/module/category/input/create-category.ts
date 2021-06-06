@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEnum, Length } from 'class-validator';
 import { LanguageType } from 'src/module/shared/model/enum/language-type.enum';
-import { Trim } from 'src/module/shared/decorator/trim';
+import { Trim } from 'src/module/shared/decorator/transform/trim';
 
 @InputType()
 export class CreateCategory {

@@ -105,11 +105,11 @@ type Post {
 
 type Query {
   categories(filter: ListCategory): [Category!]!
-  category(id: Float!): Post!
+  category(id: ID!): Post!
   currentUser: User!
-  post(id: Float!): Post!
+  post(id: ID!): Post!
   posts(filter: ListPost): [Post!]!
-  user(id: Float!): User!
+  user(id: ID!): User!
   users(filter: ListUser): [User!]!
 }
 
