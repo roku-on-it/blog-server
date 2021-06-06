@@ -1,59 +1,50 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { AuthService } from 'src/module/auth/auth.service';
-import { plainToClass } from 'class-transformer';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { AuthService } from 'src/module/auth/service/auth.service';
 import { User } from 'src/module/user/model/user';
-import { JwtResponse } from 'src/module/auth/model/jwt-response';
-import { ForbiddenException } from '@nestjs/common';
 import { CreateUser } from 'src/module/user/input/create-user';
 import { LoginInput } from 'src/module/auth/input/login-input';
+import { RegisterProducerService } from 'src/module/auth/service/register.producer.service';
+import { RegisterResponse } from 'src/module/auth/model/register-response';
+import { GQLContext } from 'src/module/auth/guard/interface/role';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly registerService: RegisterProducerService,
+  ) {}
+
+  @Mutation(() => RegisterResponse)
+  async register(
+    @Args('payload') payload: CreateUser,
+  ): Promise<RegisterResponse> {
+    return await this.registerService.addToRegisterQueue(payload);
+  }
 
   @Mutation(() => User)
-  async register(@Args('payload') payload: CreateUser): Promise<User> {
-    return plainToClass(User, payload).save();
-  }
-
-  @Mutation(() => JwtResponse)
-  async login(@Args('payload') payload: LoginInput): Promise<JwtResponse> {
-    return this.validate(payload);
-  }
-
-  async validate(payload: LoginInput): Promise<JwtResponse> {
-    return this.validateUser(payload.username, payload.password).then(
-      (user) => {
-        return this.authService.generateJwt(user).then((jwt) => {
-          return {
-            token: jwt,
-          };
-        });
-      },
-    );
-  }
-
-  async validateUser(username: string, password: string): Promise<User> {
-    return this.findByUsername(username).then((user) => {
-      return this.authService
-        .comparePasswords(password, user.password)
-        .then((match) => {
-          if (match) {
-            return user;
-          } else {
-            throw new ForbiddenException('Username or password is incorrect');
-          }
-        });
+  async login(
+    @Args('payload') payload: LoginInput,
+    @Context() { req }: GQLContext,
+  ): Promise<User> {
+    return await this.authService.validate(payload).then((user) => {
+      req.session.userId = user.id;
+      return user;
     });
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const user = await User.findOne({ username });
+  @Mutation(() => Boolean)
+  async logout(@Context() { req, res }: GQLContext): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log(err);
+          return reject(false);
+        }
+      });
 
-    if (null == user) {
-      throw new ForbiddenException('Username or password is incorrect');
-    }
+      res.clearCookie('qid');
 
-    return user;
+      return resolve(true);
+    });
   }
 }
