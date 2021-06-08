@@ -12,6 +12,7 @@ import { AuthService } from 'src/module/auth/service/auth.service';
 import { hash } from 'bcrypt';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
+import { UpdateMe } from 'src/module/user/input/update-me';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -50,13 +51,13 @@ export class UserResolver {
 
   @Query(() => User)
   @Authorize()
-  async currentUser(@CurrentUser() user: User): Promise<User> {
+  async me(@CurrentUser() user: User): Promise<User> {
     return user;
   }
 
   @Mutation(() => User)
   @Authorize()
-  async updatePassword(
+  async updateMyPassword(
     @CurrentUser() user: User,
     @Payload() payload: UpdateUserPassword,
   ): Promise<User> {
@@ -74,5 +75,21 @@ export class UserResolver {
       password: newPassword,
     }).save();
     return user;
+  }
+
+  @Mutation(() => User)
+  @Authorize()
+  async deleteMe(@CurrentUser() user: User): Promise<User> {
+    return await user.softRemove();
+  }
+
+  @Mutation(() => User)
+  @Authorize()
+  async updateMe(
+    @CurrentUser() user: User,
+    @Payload() payload: UpdateMe,
+  ): Promise<User> {
+    console.log(payload);
+    return plainToClassFromExist(user, payload).save();
   }
 }

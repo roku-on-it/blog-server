@@ -75,13 +75,15 @@ type Mutation {
   createCategory(payload: CreateCategory!): Category!
   createPost(payload: CreatePost!): Post!
   deleteCategory(payload: DeleteCategory!): Category!
+  deleteMe: User!
   deletePost(payload: DeletePost!): Post!
   deleteUser(payload: DeleteUser!): User!
   login(payload: LoginInput!): User!
   logout: Boolean!
   register(payload: CreateUser!): RegisterResponse!
   updateCategory(payload: UpdateCategory!): Category!
-  updatePassword(payload: UpdateUserPassword!): User!
+  updateMe(payload: UpdateMe!): User!
+  updateMyPassword(payload: UpdateUserPassword!): User!
   updatePost(payload: UpdatePost!): Post!
   updateUser(payload: UpdateUser!): User!
 }
@@ -101,7 +103,7 @@ type Post {
 type Query {
   categories(filter: ListCategory): [Category!]!
   category(id: ID!): Post!
-  currentUser: User!
+  me: User!
   post(id: ID!): Post!
   posts(filter: ListPost): [Post!]!
   user(id: ID!): User!
@@ -119,6 +121,12 @@ type RegisterResponse {
 input UpdateCategory {
   id: ID!
   name: String
+}
+
+input UpdateMe {
+  fullName: String
+  role: UserRole
+  username: String
 }
 
 input UpdatePost {
