@@ -20,7 +20,8 @@ export class CreatePost {
   @IsOptional()
   sources: string[];
 
-  @Field(() => RefInput)
+  @Field(() => RefInput, { nullable: true })
+  @IsOptional()
   @IsObject()
   category: Category;
 }
