@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsObject, IsOptional, Length } from 'class-validator';
+import { IsArray, IsOptional, Length } from 'class-validator';
 import { RefInput } from 'src/module/shared/input/ref-input';
 import { Category } from 'src/module/category/model/category';
 import { Trim } from 'src/module/shared/decorator/transform/trim';
@@ -22,6 +22,5 @@ export class CreatePost {
 
   @Field(() => RefInput, { nullable: true })
   @IsOptional()
-  @IsObject()
   category: Category;
 }

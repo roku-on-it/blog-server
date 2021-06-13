@@ -7,7 +7,7 @@ import { GraphQLError } from 'graphql';
     GraphQLModule.forRoot({
       cors: false,
       sortSchema: true,
-      autoSchemaFile: 'schema.gql',
+      autoSchemaFile: true,
       context: ({ req, res }) => ({ req, res }),
       formatError: (error: GraphQLError) => {
         return {

@@ -13,15 +13,18 @@ import { plainToClass } from 'class-transformer';
 import { DeletePost } from 'src/module/post/input/delete-post';
 import { UpdatePost } from 'src/module/post/input/update-post';
 import { ListPost } from 'src/module/post/input/list-post';
-import { NotFoundException } from '@nestjs/common';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
+import { Authorize } from 'src/module/auth/decorator/authorize';
+import { UserRole } from 'src/module/user/model/enum/user-role';
+import { User } from 'src/module/user/model/user';
+import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 
 @Resolver(() => Post)
 export class PostResolver {
   @Query(() => Post)
   async post(@Id() id: number): Promise<Post> {
-    return await Post.findOneOrFail({ id });
+    return await Post.findOneOrFail({ loadRelationIds: true, where: { id } });
   }
 
   @Query(() => [Post])
@@ -32,29 +35,36 @@ export class PostResolver {
   }
 
   @Mutation(() => Post)
-  async createPost(@Payload() payload: CreatePost): Promise<Post> {
-    return plainToClass(Post, payload).save();
+  @Authorize(UserRole.Admin)
+  async createPost(
+    @Payload() payload: CreatePost,
+    @CurrentUser() user: User,
+  ): Promise<Post> {
+    return plainToClass(Post, { ...payload, user }).save();
   }
 
   @Mutation(() => Post)
+  @Authorize(UserRole.Admin)
   async deletePost(@Payload() payload: DeletePost): Promise<Post> {
     const post = await Post.findOneOrFail(payload.id);
     return post.softRemove();
   }
 
   @Mutation(() => Post)
+  @Authorize(UserRole.Mod)
   async updatePost(@Payload() payload: UpdatePost): Promise<Post> {
     return await Post.findOneAndUpdate(payload);
   }
 
   @ResolveField(() => Category)
   async category(@Parent() post: Post): Promise<Category> {
-    const category = await Category.findOne(post.category);
+    return await Category.findOne(post.category);
+  }
 
-    if (null == category) {
-      throw new NotFoundException('Category not found');
-    }
-
-    return category;
+  @ResolveField(() => User)
+  async user(@Parent() post: Post): Promise<User> {
+    return User.findOneOrFail(post.user, {
+      loadRelationIds: true,
+    });
   }
 }

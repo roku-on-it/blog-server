@@ -14,8 +14,9 @@ export class ListPost {
           { title: ILike('%' + this.query + '%') },
           { content: ILike('%' + this.query + '%') },
         ],
+        loadRelationIds: true,
       });
     }
-    return Post.find(options);
+    return Post.find({ loadRelationIds: true, ...options });
   }
 }

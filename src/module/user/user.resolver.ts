@@ -1,11 +1,18 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 import { UpdateUser } from 'src/module/user/input/update-user';
 import { Authorize } from 'src/module/auth/decorator/authorize';
 import { ListUser } from 'src/module/user/input/list-user';
 import { DeleteUser } from 'src/module/user/input/delete-user';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { UpdateUserPassword } from 'src/module/user/input/update-user-password';
 import { plainToClassFromExist } from 'class-transformer';
 import { AuthService } from 'src/module/auth/service/auth.service';
@@ -13,18 +20,21 @@ import { hash } from 'bcrypt';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
 import { UpdateMe } from 'src/module/user/input/update-me';
+import { UserRole } from 'src/module/user/model/enum/user-role';
+import { Post } from 'src/module/post/model/post';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => User)
-  @Authorize()
+  @Authorize(UserRole.Mod)
   async user(@Id() id: number): Promise<User> {
     return await User.findOneOrFail({ id });
   }
 
   @Query(() => [User])
+  @Authorize(UserRole.Mod)
   async users(
     @Args('filter', { nullable: true }) filter: ListUser,
   ): Promise<User[]> {
@@ -32,19 +42,32 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @Authorize(UserRole.Mod)
   async updateUser(@Payload() payload: UpdateUser): Promise<User> {
     return await User.findOneAndUpdate(payload);
   }
 
   @Mutation(() => User)
-  async deleteUser(@Payload() payload: DeleteUser): Promise<User> {
+  @Authorize(UserRole.Admin)
+  async deleteUser(
+    @Payload() payload: DeleteUser,
+    @CurrentUser() currentUser: User,
+  ): Promise<User> {
     const user = await User.findOneOrFail(payload.id);
 
-    if (null == user) {
-      throw new NotFoundException();
+    if (currentUser.role <= user.role) {
+      throw new ForbiddenException();
     }
 
     return user.softRemove();
+  }
+
+  @ResolveField(() => [Post])
+  async posts(@Parent() user: User): Promise<Post[]> {
+    return Post.find({
+      where: { user },
+      loadRelationIds: true,
+    });
   }
 
   // User's query & mutations
@@ -89,7 +112,6 @@ export class UserResolver {
     @CurrentUser() user: User,
     @Payload() payload: UpdateMe,
   ): Promise<User> {
-    console.log(payload);
     return plainToClassFromExist(user, payload).save();
   }
 }
