@@ -19,10 +19,12 @@ export const roleCheck: FieldMiddleware = async (
   }
 
   const user = await User.findOneOrFail(session.userId);
+
   if (user.role < role) {
     throw new ForbiddenException(
       'Insufficient permission to access ' + info.fieldName,
     );
   }
+
   return next();
 };
