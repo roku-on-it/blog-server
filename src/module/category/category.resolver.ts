@@ -23,7 +23,10 @@ import { UserRole } from 'src/module/user/model/enum/user-role';
 export class CategoryResolver {
   @Query(() => Post)
   async category(@Id() id: number): Promise<Category> {
-    return await Category.findOneOrFail({ id });
+    return await Category.findOneOrFail({
+      where: { id },
+      loadRelationIds: true,
+    });
   }
 
   @Query(() => [Category])

@@ -19,11 +19,11 @@ export class Post extends Substructure {
   @Column({ type: 'simple-array', nullable: true })
   sources: string[];
 
-  @Field(() => Category, { nullable: true })
-  @ManyToOne(() => Category, (c) => c.posts, { nullable: true })
+  @Field(() => Category, { nullable: false })
+  @ManyToOne(() => Category, (c) => c.posts, { nullable: false })
   category: Category;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (u) => u.posts)
+  @Field(() => User, { nullable: false })
+  @ManyToOne(() => User, (u) => u.posts, { nullable: false })
   user: User;
 }

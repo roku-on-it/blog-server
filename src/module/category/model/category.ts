@@ -11,6 +11,6 @@ export class Category extends Substructure {
   name: string;
 
   @Field(() => [Post], { nullable: true })
-  @OneToMany(() => Post, (p) => p.category, { nullable: true })
+  @OneToMany(() => Post, (p) => p.category)
   posts: Post[];
 }
