@@ -61,7 +61,6 @@ export class CategoryResolver {
     @Parent() category: Category,
     @Args('filter', { nullable: true }) filter: ListPost,
   ): Promise<Post[]> {
-    console.log(category);
     return filter.find({
       where: { category },
       loadRelationIds: true,
