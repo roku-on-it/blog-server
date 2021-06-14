@@ -7,6 +7,7 @@ import { RegisterProducerService } from 'src/module/auth/service/register.produc
 import { RegisterResponse } from 'src/module/auth/model/register-response';
 import { GQLContext } from 'src/module/auth/guard/interface/role';
 import { Payload } from 'src/module/shared/decorator/param/payload';
+import { Authorize } from 'src/module/auth/decorator/authorize';
 
 @Resolver()
 export class AuthResolver {
@@ -32,6 +33,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorize()
   async logout(@Context() { req, res }: GQLContext): Promise<boolean> {
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {

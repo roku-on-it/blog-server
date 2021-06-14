@@ -21,7 +21,7 @@ import { UserRole } from 'src/module/user/model/enum/user-role';
 
 @Resolver(() => Category)
 export class CategoryResolver {
-  @Query(() => Post)
+  @Query(() => Category)
   async category(@Id() id: number): Promise<Category> {
     return await Category.findOneOrFail({
       where: { id },
@@ -37,7 +37,7 @@ export class CategoryResolver {
   }
 
   @Mutation(() => Category)
-  // @Authorize(UserRole.Admin)
+  @Authorize(UserRole.Admin)
   async createCategory(@Payload() payload: CreateCategory): Promise<Category> {
     return plainToClass(Category, payload).save();
   }
@@ -61,6 +61,7 @@ export class CategoryResolver {
     @Parent() category: Category,
     @Args('filter', { nullable: true }) filter: ListPost,
   ): Promise<Post[]> {
+    console.log(category);
     return filter.find({
       where: { category },
       loadRelationIds: true,

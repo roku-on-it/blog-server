@@ -42,21 +42,34 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorize(UserRole.Mod)
-  async updateUser(@Payload() payload: UpdateUser): Promise<User> {
+  @Authorize(UserRole.Admin)
+  async updateUser(
+    @CurrentUser() currentUser: User,
+    @Payload() payload: UpdateUser,
+  ): Promise<User> {
+    const user = await User.findOneOrFail(payload.id);
+
+    if (currentUser.role <= user.role) {
+      throw new ForbiddenException('Insufficient permission');
+    }
+
+    if (currentUser.role <= payload.role) {
+      throw new ForbiddenException('Insufficient permission');
+    }
+
     return await User.findOneAndUpdate(payload);
   }
 
   @Mutation(() => User)
   @Authorize(UserRole.Admin)
   async deleteUser(
-    @Payload() payload: DeleteUser,
     @CurrentUser() currentUser: User,
+    @Payload() payload: DeleteUser,
   ): Promise<User> {
     const user = await User.findOneOrFail(payload.id);
 
     if (currentUser.role <= user.role) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Insufficient permission');
     }
 
     return user.softRemove();
@@ -74,19 +87,19 @@ export class UserResolver {
 
   @Query(() => User)
   @Authorize()
-  async me(@CurrentUser() user: User): Promise<User> {
-    return user;
+  async me(@CurrentUser() currentUser: User): Promise<User> {
+    return currentUser;
   }
 
   @Mutation(() => User)
   @Authorize()
   async updateMyPassword(
-    @CurrentUser() user: User,
+    @CurrentUser() currentUser: User,
     @Payload() payload: UpdateUserPassword,
   ): Promise<User> {
     const passMatch = await this.authService.comparePasswords(
       payload.password,
-      user.password,
+      currentUser.password,
     );
 
     if (!passMatch) {
@@ -94,24 +107,24 @@ export class UserResolver {
     }
 
     const newPassword = await hash(payload.newPassword, 12);
-    await plainToClassFromExist(user, {
+    await plainToClassFromExist(currentUser, {
       password: newPassword,
     }).save();
-    return user;
+    return currentUser;
   }
 
   @Mutation(() => User)
   @Authorize()
-  async deleteMe(@CurrentUser() user: User): Promise<User> {
-    return await user.softRemove();
+  async deleteMe(@CurrentUser() currentUser: User): Promise<User> {
+    return await currentUser.softRemove();
   }
 
   @Mutation(() => User)
   @Authorize()
   async updateMe(
-    @CurrentUser() user: User,
+    @CurrentUser() currentUser: User,
     @Payload() payload: UpdateMe,
   ): Promise<User> {
-    return plainToClassFromExist(user, payload).save();
+    return plainToClassFromExist(currentUser, payload).save();
   }
 }

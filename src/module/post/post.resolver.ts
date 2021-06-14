@@ -38,9 +38,9 @@ export class PostResolver {
   @Authorize(UserRole.Admin)
   async createPost(
     @Payload() payload: CreatePost,
-    @CurrentUser() user: User,
+    @CurrentUser() currentUser: User,
   ): Promise<Post> {
-    return plainToClass(Post, { ...payload, user }).save();
+    return plainToClass(Post, { ...payload, currentUser }).save();
   }
 
   @Mutation(() => Post)
@@ -58,7 +58,7 @@ export class PostResolver {
 
   @ResolveField(() => Category)
   async category(@Parent() post: Post): Promise<Category> {
-    return await Category.findOne(post.category);
+    return await Category.findOne(post.category, { loadRelationIds: true });
   }
 
   @ResolveField(() => User)
