@@ -1,7 +1,7 @@
 import { FieldMiddleware, MiddlewareContext, NextFn } from '@nestjs/graphql';
 import { User } from 'src/module/user/model/user';
 import { GQLContext } from 'src/module/auth/guard/interface/role';
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 
 export const roleCheck: FieldMiddleware = async (
   { info, context }: MiddlewareContext,
@@ -13,8 +13,8 @@ export const roleCheck: FieldMiddleware = async (
   const session = (context as GQLContext).req.session;
 
   if (null == session.userId) {
-    throw new ForbiddenException(
-      'Insufficient permission to access ' + info.fieldName,
+    throw new UnauthorizedException(
+      'Must be logged in to access ' + info.fieldName,
     );
   }
 
