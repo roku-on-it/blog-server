@@ -15,7 +15,7 @@ import { MAX_QUERY_DEPTH } from 'src/module/misc/app-graphql/constants';
       formatError: (error: GraphQLError) => {
         return {
           message: error.message,
-          extensions: error.extensions.exception.response,
+          status: error.extensions.exception.status,
         };
       },
     }),
