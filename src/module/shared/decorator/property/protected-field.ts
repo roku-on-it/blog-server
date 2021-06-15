@@ -4,13 +4,12 @@ import { Extensions, Field, FieldOptions } from '@nestjs/graphql';
 import { roleCheck } from 'src/module/shared/middleware/role-check';
 import { ReturnTypeFunc } from '@nestjs/graphql/dist/interfaces/return-type-func.interface';
 
-export function ProtectedField(
+export const ProtectedField = (
   role: UserRole,
   returnTypeFunction?: ReturnTypeFunc,
   options?: FieldOptions,
-): PropertyDecorator {
-  return applyDecorators(
+): PropertyDecorator =>
+  applyDecorators(
     Field(returnTypeFunction, { middleware: [roleCheck], ...options }),
     Extensions({ role: role }),
   );
-}
