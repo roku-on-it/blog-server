@@ -19,6 +19,7 @@ import { Authorize } from 'src/module/auth/decorator/authorize';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
+import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -36,6 +37,7 @@ export class PostResolver {
 
   @Mutation(() => Post)
   @Authorize(UserRole.Admin)
+  @RateLimit(1, 30)
   async createPost(
     @Payload() payload: CreatePost,
     @CurrentUser() currentUser: User,
@@ -45,6 +47,7 @@ export class PostResolver {
 
   @Mutation(() => Post)
   @Authorize(UserRole.Admin)
+  @RateLimit(1, 30)
   async deletePost(@Payload() payload: DeletePost): Promise<Post> {
     const post = await Post.findOneOrFail(payload.id);
     return post.softRemove();
@@ -52,6 +55,7 @@ export class PostResolver {
 
   @Mutation(() => Post)
   @Authorize(UserRole.Mod)
+  @RateLimit(2, 10)
   async updatePost(@Payload() payload: UpdatePost): Promise<Post> {
     return await Post.findOneAndUpdate(payload);
   }

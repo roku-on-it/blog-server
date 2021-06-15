@@ -18,6 +18,7 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => RegisterResponse)
+  @RateLimit(3, 15) // limit: 3, ttl: 15
   async register(@Payload() payload: CreateUser): Promise<RegisterResponse> {
     return await this.registerService.addToRegisterQueue(payload);
   }
@@ -36,18 +37,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @Authorize()
-  async logout(@Context() { req, res }: GQLContext): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log(err);
-          return reject(false);
-        }
-      });
-
-      res.clearCookie('qid');
-
-      return resolve(true);
-    });
+  async logout(@Context() context: GQLContext): Promise<boolean> {
+    return this.authService.logoutAndDestroySession(context);
   }
 }

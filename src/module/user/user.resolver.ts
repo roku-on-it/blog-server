@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Mutation,
   Parent,
   Query,
@@ -22,6 +23,8 @@ import { Id } from 'src/module/shared/decorator/param/id';
 import { UpdateMe } from 'src/module/user/input/update-me';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { Post } from 'src/module/post/model/post';
+import { RateLimit } from 'src/module/auth/decorator/rate-limit';
+import { GQLContext } from 'src/module/auth/guard/interface/role';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -43,6 +46,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorize(UserRole.Admin)
+  @RateLimit(10, 20)
   async updateUser(
     @CurrentUser() currentUser: User,
     @Payload() payload: UpdateUser,
@@ -62,6 +66,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorize(UserRole.Admin)
+  @RateLimit(2, 10)
   async deleteUser(
     @CurrentUser() currentUser: User,
     @Payload() payload: DeleteUser,
@@ -93,6 +98,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorize()
+  @RateLimit(2, 10)
   async updateMyPassword(
     @CurrentUser() currentUser: User,
     @Payload() payload: UpdateUserPassword,
@@ -115,12 +121,17 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorize()
-  async deleteMe(@CurrentUser() currentUser: User): Promise<User> {
+  async deleteMe(
+    @CurrentUser() currentUser: User,
+    @Context() context: GQLContext,
+  ): Promise<User> {
+    await this.authService.logoutAndDestroySession(context);
     return await currentUser.softRemove();
   }
 
   @Mutation(() => User)
   @Authorize()
+  @RateLimit(3, 60)
   async updateMe(
     @CurrentUser() currentUser: User,
     @Payload() payload: UpdateMe,

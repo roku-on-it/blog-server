@@ -18,6 +18,7 @@ import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
 import { Authorize } from 'src/module/auth/decorator/authorize';
 import { UserRole } from 'src/module/user/model/enum/user-role';
+import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -38,12 +39,14 @@ export class CategoryResolver {
 
   @Mutation(() => Category)
   @Authorize(UserRole.Admin)
+  @RateLimit(1, 30)
   async createCategory(@Payload() payload: CreateCategory): Promise<Category> {
     return plainToClass(Category, payload).save();
   }
 
   @Mutation(() => Category)
   @Authorize(UserRole.Admin)
+  @RateLimit(1, 30)
   async deleteCategory(@Payload() payload: DeleteCategory): Promise<Category> {
     const category = await Category.findOne(payload.id);
     return category.softRemove();
@@ -51,6 +54,7 @@ export class CategoryResolver {
 
   @Mutation(() => Category)
   @Authorize(UserRole.Mod)
+  @RateLimit(2, 10)
   async updateCategory(@Payload() payload: UpdateCategory): Promise<Category> {
     const category = await Category.findOne(payload.id);
     return plainToClassFromExist(category, payload).save();
