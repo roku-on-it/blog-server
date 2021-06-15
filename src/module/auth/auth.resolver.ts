@@ -8,6 +8,7 @@ import { RegisterResponse } from 'src/module/auth/model/register-response';
 import { GQLContext } from 'src/module/auth/guard/interface/role';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Authorize } from 'src/module/auth/decorator/authorize';
+import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 
 @Resolver()
 export class AuthResolver {
@@ -22,6 +23,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
+  @RateLimit(5, 15)
   async login(
     @Payload() payload: LoginInput,
     @Context() { req }: GQLContext,
