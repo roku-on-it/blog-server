@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as Redis from 'ioredis';
+import { ThrottlerStorage } from '@nestjs/throttler';
 
 @Injectable()
-export class ThrottlerStorageRedisService {
+export class ThrottlerStorageRedisService
+  implements Omit<ThrottlerStorage, 'storage'>
+{
   redis: Redis.Redis;
   scanCount: number;
 
