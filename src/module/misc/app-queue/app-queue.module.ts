@@ -23,7 +23,7 @@ import { RegisterConsumer } from 'src/module/auth/service/consumer/register.cons
           timeout: 30000,
           removeOnComplete: true,
           removeOnFail: true,
-          attempts: 3,
+          attempts: 2,
         },
       }),
     }),
