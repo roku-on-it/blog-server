@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { LoginInput } from 'src/module/auth/input/login-input';
 import { User } from 'src/module/user/model/user';
-import { GQLContext } from 'src/module/auth/guard/interface/role';
+import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 
 @Injectable()
 export class AuthService {

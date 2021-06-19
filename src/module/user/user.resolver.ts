@@ -24,7 +24,7 @@ import { UpdateMe } from 'src/module/user/input/update-me';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { Post } from 'src/module/post/model/post';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
-import { GQLContext } from 'src/module/auth/guard/interface/role';
+import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 
 @Resolver(() => User)
 export class UserResolver {

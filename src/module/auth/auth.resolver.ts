@@ -5,7 +5,7 @@ import { CreateUser } from 'src/module/user/input/create-user';
 import { LoginInput } from 'src/module/auth/input/login-input';
 import { RegisterProducerService } from 'src/module/auth/service/register.producer.service';
 import { RegisterResponse } from 'src/module/auth/model/register-response';
-import { GQLContext } from 'src/module/auth/guard/interface/role';
+import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Authorize } from 'src/module/auth/decorator/authorize';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
