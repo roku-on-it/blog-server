@@ -18,7 +18,10 @@ export const roleCheck: FieldMiddleware = async (
     );
   }
 
-  const user = await User.findOneOrFail(session.userId);
+  const user = await User.createQueryBuilder('user')
+    .select('user.role')
+    .where('user.id = :id', { id: session.userId })
+    .getOne();
 
   if (user.role < role) {
     throw new ForbiddenException(

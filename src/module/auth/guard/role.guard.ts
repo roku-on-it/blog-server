@@ -21,7 +21,11 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
-    const user = await User.findOneOrFail(session.userId);
+    const user = await User.createQueryBuilder('user')
+      .select('user.role')
+      .where('user.id = :id', { id: session.userId })
+      .getOne();
+
     return user.role >= role;
   }
 }
