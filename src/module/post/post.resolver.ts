@@ -40,9 +40,9 @@ export class PostResolver {
   @RateLimit(1, 30)
   async createPost(
     @Payload() payload: CreatePost,
-    @CurrentUser() currentUser: User,
+    @CurrentUser() user: User,
   ): Promise<Post> {
-    return plainToClass(Post, { ...payload, currentUser }).save();
+    return await plainToClass(Post, { ...payload, user }).save();
   }
 
   @Mutation(() => Post)
