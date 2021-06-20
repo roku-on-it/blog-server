@@ -1,7 +1,11 @@
 import { FieldMiddleware, MiddlewareContext, NextFn } from '@nestjs/graphql';
 import { User } from 'src/module/user/model/user';
 import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 export const roleCheck: FieldMiddleware = async (
   { info, context }: MiddlewareContext,
@@ -22,6 +26,10 @@ export const roleCheck: FieldMiddleware = async (
     .select('user.role')
     .where('user.id = :id', { id: session.userId })
     .getOne();
+
+  if (null == user) {
+    throw new NotFoundException();
+  }
 
   if (user.role < role) {
     throw new ForbiddenException(
