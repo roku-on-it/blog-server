@@ -32,7 +32,7 @@ export class UserResolver {
 
   @Query(() => User)
   @Authorize(UserRole.Mod)
-  async user(@Id() id: number): Promise<User> {
+  async user(@Id() id: bigint): Promise<User> {
     return await User.findOneOrFail({ id });
   }
 

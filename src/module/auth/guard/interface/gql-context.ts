@@ -11,5 +11,5 @@ interface Req extends Request {
 }
 
 interface Sess extends session.Session {
-  userId: number;
+  userId: bigint;
 }

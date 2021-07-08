@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BeforeInsert,
   CreateDateColumn,
   DeleteDateColumn,
   EntityNotFoundError,
@@ -7,7 +8,7 @@ import {
   FindOneOptions,
   ObjectID,
   ObjectType as ObjectType$,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   SaveOptions,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,12 +16,13 @@ import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql';
 import { plainToClassFromExist } from 'class-transformer';
 import { UpdateModel } from 'src/module/shared/input/update-model';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { UniqueID } from 'nodejs-snowflake';
 
 @ObjectType()
 export class Substructure extends BaseEntity {
   @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn({ type: 'bigint' })
+  id: bigint;
 
   @Field(() => GraphQLISODateTime)
   @CreateDateColumn()
@@ -72,6 +74,10 @@ export class Substructure extends BaseEntity {
     }
 
     return super.findOneOrFail(...args).catch((error) => {
+      if ('22P02' === error.code) {
+        throw new NotFoundException();
+      }
+
       if (error instanceof EntityNotFoundError) {
         throw new NotFoundException(this.name + ' not found');
       }
@@ -93,5 +99,12 @@ export class Substructure extends BaseEntity {
     await plainToClassFromExist(entity, payload).save();
 
     return entity as unknown as U;
+  }
+
+  @BeforeInsert()
+  private async generateSnowflake() {
+    this.id = new UniqueID({
+      customEpoch: 1609459200,
+    }).getUniqueID() as bigint;
   }
 }
