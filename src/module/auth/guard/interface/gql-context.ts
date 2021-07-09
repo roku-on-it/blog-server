@@ -6,10 +6,10 @@ export interface GQLContext {
   res: Response;
 }
 
-interface Req extends Request {
-  session: Sess;
+export interface Req extends Request {
+  session: Session;
 }
 
-interface Sess extends session.Session {
+export interface Session extends session.Session {
   userId: bigint;
 }
