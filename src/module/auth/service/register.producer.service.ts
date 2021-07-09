@@ -15,7 +15,7 @@ export class RegisterProducerService {
       backoff: 1000,
     });
 
-    return await queue // Catching the error right after job is completed.
+    return queue // Catching the error right after job is completed.
       .finished()
       .then(() => {
         return { success: true };

@@ -33,7 +33,7 @@ export class UserResolver {
   @Query(() => User)
   @Authorize(UserRole.Mod)
   async user(@Id() id: bigint): Promise<User> {
-    return await User.findOneOrFail({ id });
+    return User.findOneOrFail({ id });
   }
 
   @Query(() => [User])
@@ -41,7 +41,7 @@ export class UserResolver {
   async users(
     @Args('filter', { nullable: true }) filter: ListUser,
   ): Promise<User[]> {
-    return await filter.find();
+    return filter.find();
   }
 
   @Mutation(() => User)
@@ -61,7 +61,7 @@ export class UserResolver {
       throw new ForbiddenException('Insufficient permission');
     }
 
-    return await User.findOneAndUpdate(payload);
+    return User.findOneAndUpdate(payload);
   }
 
   @Mutation(() => User)
@@ -126,7 +126,7 @@ export class UserResolver {
     @Context() context: GQLContext,
   ): Promise<User> {
     await this.authService.logoutAndDestroySession(context);
-    return await currentUser.softRemove();
+    return currentUser.softRemove();
   }
 
   @Mutation(() => User)

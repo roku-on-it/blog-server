@@ -20,7 +20,7 @@ export class AuthResolver {
   @Mutation(() => RegisterResponse)
   @RateLimit(3, 15) // limit: 3, ttl: 15
   async register(@Payload() payload: CreateUser): Promise<RegisterResponse> {
-    return await this.registerService.addToRegisterQueue(payload);
+    return this.registerService.addToRegisterQueue(payload);
   }
 
   @Mutation(() => User)
@@ -29,7 +29,7 @@ export class AuthResolver {
     @Payload() payload: LoginInput,
     @Context() { req }: GQLContext,
   ): Promise<User> {
-    return await this.authService.validate(payload).then((user) => {
+    return this.authService.validate(payload).then((user) => {
       req.session.userId = user.id;
       return user;
     });

@@ -8,6 +8,6 @@ export const CurrentUser = createParamDecorator(
     const ctx: GQLContext = GqlExecutionContext.create(context).getContext();
     const id = ctx.req.session.userId;
 
-    return await User.findOneOrFail({ id });
+    return User.findOneOrFail({ id });
   },
 );

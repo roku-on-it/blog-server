@@ -25,14 +25,14 @@ import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 export class PostResolver {
   @Query(() => Post)
   async post(@Id() id: number): Promise<Post> {
-    return await Post.findOneOrFail({ loadRelationIds: true, where: { id } });
+    return Post.findOneOrFail({ loadRelationIds: true, where: { id } });
   }
 
   @Query(() => [Post])
   async posts(
     @Args('filter', { nullable: true }) filter: ListPost,
   ): Promise<Post[]> {
-    return await filter.find();
+    return filter.find();
   }
 
   @Mutation(() => Post)
@@ -42,7 +42,7 @@ export class PostResolver {
     @Payload() payload: CreatePost,
     @CurrentUser() user: User,
   ): Promise<Post> {
-    return await plainToClass(Post, { ...payload, user }).save();
+    return plainToClass(Post, { ...payload, user }).save();
   }
 
   @Mutation(() => Post)
@@ -57,12 +57,12 @@ export class PostResolver {
   @Authorize(UserRole.Mod)
   @RateLimit(2, 10)
   async updatePost(@Payload() payload: UpdatePost): Promise<Post> {
-    return await Post.findOneAndUpdate(payload);
+    return Post.findOneAndUpdate(payload);
   }
 
   @ResolveField(() => Category)
   async category(@Parent() post: Post): Promise<Category> {
-    return await Category.findOne(post.category, { loadRelationIds: true });
+    return Category.findOne(post.category, { loadRelationIds: true });
   }
 
   @ResolveField(() => User)

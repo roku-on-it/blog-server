@@ -24,7 +24,7 @@ import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 export class CategoryResolver {
   @Query(() => Category)
   async category(@Id() id: number): Promise<Category> {
-    return await Category.findOneOrFail({
+    return Category.findOneOrFail({
       where: { id },
       loadRelationIds: true,
     });
@@ -34,7 +34,7 @@ export class CategoryResolver {
   async categories(
     @Args('filter', { nullable: true }) filter: ListCategory,
   ): Promise<Category[]> {
-    return await filter.find();
+    return filter.find();
   }
 
   @Mutation(() => Category)
