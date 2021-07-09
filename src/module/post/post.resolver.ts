@@ -37,7 +37,7 @@ export class PostResolver {
 
   @Mutation(() => Post)
   @Authorize(UserRole.Admin)
-  @RateLimit(1, 30)
+  //@RateLimit(1, 30)
   async createPost(
     @Payload() payload: CreatePost,
     @CurrentUser() user: User,
