@@ -4,8 +4,8 @@ import { FindManyOptions, ILike } from 'typeorm';
 
 @InputType()
 export class ListPost {
-  @Field({ nullable: true })
-  query: string;
+  @Field(() => String, { nullable: true })
+  query = '';
 
   @Field({ nullable: true })
   pageIndex: number;
@@ -14,22 +14,15 @@ export class ListPost {
   pageSize: number;
 
   async find(options?: FindManyOptions): Promise<Post[]> {
-    if (null != this.query && this.query?.length) {
-      return Post.find({
-        skip: this.pageIndex * this.pageSize,
-        take: this.pageSize,
-        where: [
-          { title: ILike('%' + this.query + '%') },
-          { content: ILike('%' + this.query + '%') },
-        ],
-        loadRelationIds: true,
-        ...options,
-      });
-    }
+    this.query = this.query.length > 2 ? this.query : '';
 
     return Post.find({
       skip: this.pageIndex * this.pageSize,
-      take: this.pageSize,
+      take: this.pageSize ?? 5,
+      where: [
+        { title: ILike('%' + this.query + '%') },
+        { content: ILike('%' + this.query + '%') },
+      ],
       loadRelationIds: true,
       ...options,
     });

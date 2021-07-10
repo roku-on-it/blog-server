@@ -4,18 +4,18 @@ import { User } from 'src/module/user/model/user';
 
 @InputType()
 export class ListUser {
-  @Field({ nullable: true })
-  query: string;
+  @Field(() => String, { nullable: true })
+  query = '';
 
   async find(options?: FindManyOptions): Promise<User[]> {
-    if (null != this.query && this.query?.length) {
-      return User.find({
-        where: [
-          { fullName: ILike('%' + this.query + '%') },
-          { username: ILike('%' + this.query + '%') },
-        ],
-      });
-    }
-    return User.find(options);
+    this.query = this.query.length > 2 ? this.query : '';
+
+    return User.find({
+      where: [
+        { fullName: ILike('%' + this.query + '%') },
+        { username: ILike('%' + this.query + '%') },
+      ],
+      ...options,
+    });
   }
 }
