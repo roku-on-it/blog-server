@@ -1,5 +1,4 @@
 import {
-  Args,
   Mutation,
   Parent,
   Query,
@@ -20,6 +19,7 @@ import { UserRole } from 'src/module/user/model/enum/user-role';
 import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
+import { Filter } from 'src/module/shared/decorator/param/filter';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -29,9 +29,7 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  async posts(
-    @Args('filter', { nullable: true }) filter: ListPost,
-  ): Promise<Post[]> {
+  async posts(@Filter() filter: ListPost): Promise<Post[]> {
     return filter.find();
   }
 

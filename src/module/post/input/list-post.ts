@@ -26,11 +26,11 @@ export class ListPost {
         take: this.pageSize ?? 5,
         where: [
           {
-            category: relation,
+            [relation.constructor.name.toLocaleLowerCase()]: relation,
             title: ILike('%' + this.query + '%'),
           },
           {
-            category: relation,
+            [relation.constructor.name.toLocaleLowerCase()]: relation,
             content: ILike('%' + this.query + '%'),
           },
         ],

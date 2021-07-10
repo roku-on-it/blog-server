@@ -25,6 +25,8 @@ import { UserRole } from 'src/module/user/model/enum/user-role';
 import { Post } from 'src/module/post/model/post';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
+import { ListPost } from 'src/module/post/input/list-post';
+import { Filter } from 'src/module/shared/decorator/param/filter';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -81,11 +83,16 @@ export class UserResolver {
   }
 
   @ResolveField(() => [Post])
-  async posts(@Parent() user: User): Promise<Post[]> {
-    return Post.find({
-      where: { user },
-      loadRelationIds: true,
-    });
+  async posts(
+    @Parent() user: User,
+    @Filter() filter: ListPost,
+  ): Promise<Post[]> {
+    return filter.find(
+      {
+        loadRelationIds: true,
+      },
+      user,
+    );
   }
 
   // User's query & mutations

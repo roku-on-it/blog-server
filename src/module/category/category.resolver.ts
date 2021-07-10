@@ -19,6 +19,7 @@ import { Id } from 'src/module/shared/decorator/param/id';
 import { Authorize } from 'src/module/auth/decorator/authorize';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
+import { Filter } from 'src/module/shared/decorator/param/filter';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -63,10 +64,13 @@ export class CategoryResolver {
   @ResolveField(() => [Post])
   async posts(
     @Parent() category: Category,
-    @Args('filter', { nullable: true }) filter: ListPost,
+    @Filter() filter: ListPost,
   ): Promise<Post[]> {
-    return filter.find({
-      loadRelationIds: true,
-    });
+    return filter.find(
+      {
+        loadRelationIds: true,
+      },
+      category,
+    );
   }
 }
