@@ -16,6 +16,10 @@ export class User extends Substructure {
 
   @Field()
   @Column()
+  avatarUrl: string;
+
+  @Field()
+  @Column()
   fullName: string;
 
   @Column()
