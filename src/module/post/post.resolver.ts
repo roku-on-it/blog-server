@@ -20,6 +20,7 @@ import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 import { Filter } from 'src/module/shared/decorator/param/filter';
+import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => Post)
 export class PostResolver {
@@ -28,8 +29,8 @@ export class PostResolver {
     return Post.findOneOrFail({ loadRelationIds: true, where: { id } });
   }
 
-  @Query(() => [Post])
-  async posts(@Filter() filter: ListPost): Promise<Post[]> {
+  @Query(() => PostList)
+  async posts(@Filter() filter: ListPost): Promise<PostList> {
     return filter.find();
   }
 

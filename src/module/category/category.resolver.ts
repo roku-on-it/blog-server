@@ -11,7 +11,6 @@ import { CreateCategory } from 'src/module/category/input/create-category';
 import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import { DeleteCategory } from 'src/module/category/input/delete-category';
 import { UpdateCategory } from 'src/module/category/input/update-category';
-import { Post } from 'src/module/post/model/post';
 import { ListPost } from 'src/module/post/input/list-post';
 import { ListCategory } from 'src/module/category/input/list-category';
 import { Payload } from 'src/module/shared/decorator/param/payload';
@@ -20,6 +19,7 @@ import { Authorize } from 'src/module/auth/decorator/authorize';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 import { Filter } from 'src/module/shared/decorator/param/filter';
+import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -61,11 +61,11 @@ export class CategoryResolver {
     return plainToClassFromExist(category, payload).save();
   }
 
-  @ResolveField(() => [Post])
+  @ResolveField(() => PostList)
   async posts(
     @Parent() category: Category,
     @Filter() filter: ListPost,
-  ): Promise<Post[]> {
+  ): Promise<PostList> {
     return filter.find(
       {
         loadRelationIds: true,

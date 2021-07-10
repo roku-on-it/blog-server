@@ -3,6 +3,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Post } from 'src/module/post/model/post';
 import { slugify } from 'src/module/helper/slugify';
+import { PostList } from 'src/module/post/model/post-list';
 
 @ObjectType()
 @Entity()
@@ -15,7 +16,7 @@ export class Category extends Substructure {
   @Column()
   slug: string;
 
-  @Field(() => [Post], { nullable: true })
+  @Field(() => PostList, { nullable: true })
   @OneToMany(() => Post, (p) => p.category)
   posts: Post[];
 

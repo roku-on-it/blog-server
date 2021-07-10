@@ -22,11 +22,11 @@ import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
 import { UpdateMe } from 'src/module/user/input/update-me';
 import { UserRole } from 'src/module/user/model/enum/user-role';
-import { Post } from 'src/module/post/model/post';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 import { ListPost } from 'src/module/post/input/list-post';
 import { Filter } from 'src/module/shared/decorator/param/filter';
+import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -82,11 +82,11 @@ export class UserResolver {
     return user.softRemove();
   }
 
-  @ResolveField(() => [Post])
+  @ResolveField(() => PostList)
   async posts(
     @Parent() user: User,
     @Filter() filter: ListPost,
-  ): Promise<Post[]> {
+  ): Promise<PostList> {
     return filter.find(
       {
         loadRelationIds: true,
