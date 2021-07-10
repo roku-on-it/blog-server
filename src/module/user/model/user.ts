@@ -14,8 +14,8 @@ export class User extends Substructure {
   @Column()
   username: string;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   avatarUrl: string;
 
   @Field()
