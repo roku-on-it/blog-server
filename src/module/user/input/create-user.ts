@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsUrl, Length } from 'class-validator';
+import { IsOptional, IsUrl, Length } from 'class-validator';
 import { IsPassword } from 'src/module/shared/decorator/validator/is-password';
 import { Match } from 'src/module/shared/decorator/validator/match';
 import { IsUsername } from 'src/module/shared/decorator/validator/is-username';
@@ -12,7 +12,8 @@ export class CreateUser {
   @Trim()
   username: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsUrl(null, { message: 'Must be a valid image url' })
   @Trim()
   avatarUrl: string;
