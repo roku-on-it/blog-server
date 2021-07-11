@@ -25,7 +25,6 @@ import { UserRole } from 'src/module/user/model/enum/user-role';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 import { ListPost } from 'src/module/post/input/list-post';
-import { Filter } from 'src/module/shared/decorator/param/filter';
 import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => User)
@@ -85,7 +84,7 @@ export class UserResolver {
   @ResolveField(() => PostList)
   async posts(
     @Parent() user: User,
-    @Filter() filter: ListPost,
+    @Payload('filter', true) filter: ListPost,
   ): Promise<PostList> {
     return filter.find(
       {

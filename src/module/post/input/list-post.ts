@@ -24,6 +24,7 @@ export class ListPost {
     if (relation) {
       return {
         items: await Post.find({
+          order: { updatedAt: 'DESC' },
           skip: this.pageIndex * this.pageSize,
           take: this.pageSize ?? 5,
           where: [
@@ -45,6 +46,7 @@ export class ListPost {
 
     return {
       items: await Post.find({
+        order: { updatedAt: 'DESC' },
         skip: this.pageIndex * this.pageSize,
         take: this.pageSize ?? 5,
         where: [

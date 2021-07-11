@@ -18,7 +18,6 @@ import { Id } from 'src/module/shared/decorator/param/id';
 import { Authorize } from 'src/module/auth/decorator/authorize';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
-import { Filter } from 'src/module/shared/decorator/param/filter';
 import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => Category)
@@ -64,7 +63,7 @@ export class CategoryResolver {
   @ResolveField(() => PostList)
   async posts(
     @Parent() category: Category,
-    @Filter() filter: ListPost,
+    @Payload('filter', true) filter: ListPost,
   ): Promise<PostList> {
     return filter.find(
       {

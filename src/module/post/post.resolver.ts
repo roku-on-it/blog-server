@@ -19,7 +19,6 @@ import { UserRole } from 'src/module/user/model/enum/user-role';
 import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
-import { Filter } from 'src/module/shared/decorator/param/filter';
 import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => Post)
@@ -30,7 +29,7 @@ export class PostResolver {
   }
 
   @Query(() => PostList)
-  async posts(@Filter() filter: ListPost): Promise<PostList> {
+  async posts(@Payload('filter', true) filter: ListPost): Promise<PostList> {
     return filter.find();
   }
 
