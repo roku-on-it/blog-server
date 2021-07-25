@@ -31,33 +31,7 @@ export class ListPost {
     this.query = this.query.length > 2 ? this.query : '';
 
     if (relation) {
-      return {
-        items: await Post.find({
-          order: {
-            [this.orderBy?.field ?? 'createdAt']:
-              this.orderBy?.direction ?? 'ASC',
-          },
-          skip: this.pageIndex * this.pageSize,
-          take: this.pageSize ?? 5,
-          where: [
-            {
-              [relation.constructor.name.toLocaleLowerCase()]: relation,
-              title: ILike('%' + this.query + '%'),
-            },
-            {
-              [relation.constructor.name.toLocaleLowerCase()]: relation,
-              content: ILike('%' + this.query + '%'),
-            },
-          ],
-          loadRelationIds: true,
-          ...options,
-        }),
-        total: await Post.count(),
-      };
-    }
-
-    return {
-      items: await Post.find({
+      const [items, total] = await Post.findAndCount({
         order: {
           [this.orderBy?.field ?? 'createdAt']:
             this.orderBy?.direction ?? 'ASC',
@@ -65,13 +39,41 @@ export class ListPost {
         skip: this.pageIndex * this.pageSize,
         take: this.pageSize ?? 5,
         where: [
-          { title: ILike('%' + this.query + '%') },
-          { content: ILike('%' + this.query + '%') },
+          {
+            [relation.constructor.name.toLocaleLowerCase()]: relation,
+            title: ILike('%' + this.query + '%'),
+          },
+          {
+            [relation.constructor.name.toLocaleLowerCase()]: relation,
+            content: ILike('%' + this.query + '%'),
+          },
         ],
         loadRelationIds: true,
         ...options,
-      }),
-      total: await Post.count(),
+      });
+      return {
+        items,
+        total,
+      };
+    }
+
+    const [items, total] = await Post.findAndCount({
+      order: {
+        [this.orderBy?.field ?? 'createdAt']: this.orderBy?.direction ?? 'ASC',
+      },
+      skip: this.pageIndex * this.pageSize,
+      take: this.pageSize ?? 5,
+      where: [
+        { title: ILike('%' + this.query + '%') },
+        { content: ILike('%' + this.query + '%') },
+      ],
+      loadRelationIds: true,
+      ...options,
+    });
+
+    return {
+      items,
+      total,
     };
   }
 }
