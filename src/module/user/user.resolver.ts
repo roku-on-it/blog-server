@@ -10,7 +10,6 @@ import {
 import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
 import { UpdateUser } from 'src/module/user/input/update-user';
-import { Authorize } from 'src/module/auth/decorator/authorize';
 import { ListUser } from 'src/module/user/input/list-user';
 import { DeleteUser } from 'src/module/user/input/delete-user';
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
@@ -21,32 +20,32 @@ import { hash } from 'bcrypt';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
 import { UpdateMe } from 'src/module/user/input/update-me';
-import { UserRole } from 'src/module/user/model/enum/user-role';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 import { ListPost } from 'src/module/post/input/list-post';
 import { PostList } from 'src/module/post/model/post-list';
+import { UserList } from 'src/module/user/model/user-list';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Query(() => User)
-  @Authorize(UserRole.Mod)
+  // @Authorize(UserRole.Mod)
   async user(@Id() id: bigint): Promise<User> {
     return User.findOneOrFail({ id });
   }
 
-  @Query(() => [User])
-  @Authorize(UserRole.Mod)
+  @Query(() => UserList)
+  // @Authorize(UserRole.Mod)
   async users(
     @Args('filter', { nullable: true }) filter: ListUser,
-  ): Promise<User[]> {
+  ): Promise<UserList> {
     return filter.find();
   }
 
   @Mutation(() => User)
-  @Authorize(UserRole.Admin)
+  // @Authorize(UserRole.Admin)
   @RateLimit(10, 20)
   async updateUser(
     @CurrentUser() currentUser: User,
@@ -66,7 +65,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorize(UserRole.Admin)
+  // @Authorize(UserRole.Admin)
   @RateLimit(2, 10)
   async deleteUser(
     @CurrentUser() currentUser: User,
@@ -97,13 +96,13 @@ export class UserResolver {
   // User's query & mutations
 
   @Query(() => User)
-  @Authorize()
+  // @Authorize()
   async me(@CurrentUser() currentUser: User): Promise<User> {
     return currentUser;
   }
 
   @Mutation(() => User)
-  @Authorize()
+  // @Authorize()
   @RateLimit(2, 10)
   async updateMyPassword(
     @CurrentUser() currentUser: User,
@@ -126,7 +125,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorize()
+  // @Authorize()
   async deleteMe(
     @CurrentUser() currentUser: User,
     @Context() context: GQLContext,
@@ -136,7 +135,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorize()
+  // @Authorize()
   @RateLimit(3, 60)
   async updateMe(
     @CurrentUser() currentUser: User,
