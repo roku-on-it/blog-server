@@ -7,11 +7,7 @@ import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 @Injectable()
 export class AuthService {
   async validate(payload: LoginInput): Promise<User> {
-    return this.validateUser(payload.username, payload.password).then(
-      (user) => {
-        return user;
-      },
-    );
+    return this.validateUser(payload.username, payload.password);
   }
 
   async validateUser(username: string, password: string): Promise<User> {
