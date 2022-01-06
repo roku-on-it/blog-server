@@ -1,5 +1,4 @@
 import {
-  Args,
   Mutation,
   Parent,
   Query,
@@ -19,32 +18,34 @@ import { Authorize } from 'src/module/auth/decorator/authorize';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { User } from 'src/module/user/model/user';
 import { CurrentUser } from 'src/module/shared/decorator/param/current-user';
+import { RateLimit } from 'src/module/auth/decorator/rate-limit';
+import { PostList } from 'src/module/post/model/post-list';
 
 @Resolver(() => Post)
 export class PostResolver {
   @Query(() => Post)
   async post(@Id() id: number): Promise<Post> {
-    return await Post.findOneOrFail({ loadRelationIds: true, where: { id } });
+    return Post.findOneOrFail({ loadRelationIds: true, where: { id } });
   }
 
-  @Query(() => [Post])
-  async posts(
-    @Args('filter', { nullable: true }) filter: ListPost,
-  ): Promise<Post[]> {
-    return await filter.find();
+  @Query(() => PostList)
+  async posts(@Payload('filter', true) filter: ListPost): Promise<PostList> {
+    return filter.find();
   }
 
   @Mutation(() => Post)
   @Authorize(UserRole.Admin)
+  @RateLimit(1, 30)
   async createPost(
     @Payload() payload: CreatePost,
-    @CurrentUser() currentUser: User,
+    @CurrentUser() user: User,
   ): Promise<Post> {
-    return plainToClass(Post, { ...payload, currentUser }).save();
+    return plainToClass(Post, { ...payload, user }).save();
   }
 
   @Mutation(() => Post)
   @Authorize(UserRole.Admin)
+  @RateLimit(1, 30)
   async deletePost(@Payload() payload: DeletePost): Promise<Post> {
     const post = await Post.findOneOrFail(payload.id);
     return post.softRemove();
@@ -52,13 +53,14 @@ export class PostResolver {
 
   @Mutation(() => Post)
   @Authorize(UserRole.Mod)
+  @RateLimit(2, 10)
   async updatePost(@Payload() payload: UpdatePost): Promise<Post> {
-    return await Post.findOneAndUpdate(payload);
+    return Post.findOneAndUpdate(payload);
   }
 
   @ResolveField(() => Category)
   async category(@Parent() post: Post): Promise<Category> {
-    return await Category.findOne(post.category, { loadRelationIds: true });
+    return Category.findOne(post.category, { loadRelationIds: true });
   }
 
   @ResolveField(() => User)

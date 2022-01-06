@@ -4,7 +4,7 @@ import { BeforeInsert, Column, Entity, Index, OneToMany } from 'typeorm';
 import { Post } from 'src/module/post/model/post';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { hash } from 'bcrypt';
-import { Type } from 'class-transformer';
+import { PostList } from 'src/module/post/model/post-list';
 
 @ObjectType()
 @Entity()
@@ -13,6 +13,10 @@ export class User extends Substructure {
   @Field()
   @Column()
   username: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  avatarUrl: string;
 
   @Field()
   @Column()
@@ -25,8 +29,7 @@ export class User extends Substructure {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.User })
   role: UserRole;
 
-  @Type(() => Post)
-  @Field(() => [Post], { nullable: true })
+  @Field(() => PostList, { nullable: true })
   @OneToMany(() => Post, (p) => p.user, { nullable: true })
   posts: Post[];
 

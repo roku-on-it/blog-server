@@ -1,6 +1,6 @@
 import { UpdateModel } from 'src/module/shared/input/update-model';
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEnum, IsOptional, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsUrl, Length } from 'class-validator';
 import { Trim } from 'src/module/shared/decorator/transform/trim';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { IsUsername } from 'src/module/shared/decorator/validator/is-username';
@@ -13,6 +13,13 @@ export class UpdateUser extends UpdateModel {
   @Trim()
   @Length(3, 32)
   username: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsUrl()
+  @Trim()
+  @Length(3, 60)
+  avatarUrl: string;
 
   @Field({ nullable: true })
   @IsOptional()

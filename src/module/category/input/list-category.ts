@@ -4,20 +4,18 @@ import { Category } from 'src/module/category/model/category';
 
 @InputType()
 export class ListCategory {
-  @Field({ nullable: true })
-  query: string;
+  @Field(() => String, { nullable: true })
+  query = '';
 
   async find(options?: FindManyOptions): Promise<Category[]> {
-    if (null != this.query && this.query?.length) {
-      return Category.find({
-        loadRelationIds: true,
-        where: {
-          name: ILike('%' + this.query + '%'),
-        },
-        ...options,
-      });
-    }
+    this.query = this.query.length > 2 ? this.query : '';
 
-    return Category.find({ loadRelationIds: true, ...options });
+    return Category.find({
+      loadRelationIds: true,
+      where: {
+        name: ILike('%' + this.query + '%'),
+      },
+      ...options,
+    });
   }
 }

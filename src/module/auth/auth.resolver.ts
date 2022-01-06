@@ -5,9 +5,10 @@ import { CreateUser } from 'src/module/user/input/create-user';
 import { LoginInput } from 'src/module/auth/input/login-input';
 import { RegisterProducerService } from 'src/module/auth/service/register.producer.service';
 import { RegisterResponse } from 'src/module/auth/model/register-response';
-import { GQLContext } from 'src/module/auth/guard/interface/role';
+import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Authorize } from 'src/module/auth/decorator/authorize';
+import { RateLimit } from 'src/module/auth/decorator/rate-limit';
 
 @Resolver()
 export class AuthResolver {
@@ -17,16 +18,18 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => RegisterResponse)
+  @RateLimit(3, 15) // limit: 3, ttl: 15
   async register(@Payload() payload: CreateUser): Promise<RegisterResponse> {
-    return await this.registerService.addToRegisterQueue(payload);
+    return this.registerService.addToRegisterQueue(payload);
   }
 
   @Mutation(() => User)
+  @RateLimit(5, 15)
   async login(
     @Payload() payload: LoginInput,
     @Context() { req }: GQLContext,
   ): Promise<User> {
-    return await this.authService.validate(payload).then((user) => {
+    return this.authService.validate(payload).then((user) => {
       req.session.userId = user.id;
       return user;
     });
@@ -34,18 +37,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @Authorize()
-  async logout(@Context() { req, res }: GQLContext): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log(err);
-          return reject(false);
-        }
-      });
-
-      res.clearCookie('qid');
-
-      return resolve(true);
-    });
+  async logout(@Context() context: GQLContext): Promise<boolean> {
+    return this.authService.logoutAndDestroySession(context);
   }
 }

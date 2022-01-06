@@ -2,15 +2,12 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { LoginInput } from 'src/module/auth/input/login-input';
 import { User } from 'src/module/user/model/user';
+import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
 
 @Injectable()
 export class AuthService {
   async validate(payload: LoginInput): Promise<User> {
-    return this.validateUser(payload.username, payload.password).then(
-      (user) => {
-        return user;
-      },
-    );
+    return this.validateUser(payload.username, payload.password);
   }
 
   async validateUser(username: string, password: string): Promise<User> {
@@ -39,5 +36,20 @@ export class AuthService {
     hashedPassword: string,
   ): Promise<boolean> {
     return compare(inputPassword, hashedPassword);
+  }
+
+  async logoutAndDestroySession({ req, res }: GQLContext): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log(err);
+          return reject(false);
+        }
+      });
+
+      res.clearCookie('qid');
+
+      return resolve(true);
+    });
   }
 }

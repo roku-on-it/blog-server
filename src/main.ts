@@ -15,8 +15,9 @@ async function bootstrap() {
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient({
-    db: 1,
     host: configService.get('STORE_HOST'),
+    port: configService.get('STORE_PORT'),
+    db: configService.get('STORE_SESSION_DB'),
   });
 
   app.use(

@@ -1,8 +1,14 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { User } from 'src/module/user/model/user';
+import { Session } from 'src/module/auth/guard/interface/gql-context';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -10,7 +16,7 @@ export class RoleGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     const role = this.reflector.get<UserRole>('role', context.getHandler());
-    const session =
+    const session: Session =
       GqlExecutionContext.create(context).getContext().req.session;
 
     if (null == role) {
@@ -21,7 +27,15 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
-    const user = await User.findOneOrFail(session.userId);
+    const user = await User.createQueryBuilder('user')
+      .select('user.role')
+      .where('user.id = :id', { id: session.userId })
+      .getOne();
+
+    if (null == user) {
+      throw new NotFoundException();
+    }
+
     return user.role >= role;
   }
 }

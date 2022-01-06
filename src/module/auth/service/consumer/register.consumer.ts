@@ -10,6 +10,6 @@ import { CreateUser } from 'src/module/user/input/create-user';
 export class RegisterConsumer {
   @Process(JobType.REGISTER)
   async handleRegisterJob(job: Job<CreateUser>) {
-    return await plainToClass(User, job.data).save();
+    return plainToClass(User, job.data).save();
   }
 }
