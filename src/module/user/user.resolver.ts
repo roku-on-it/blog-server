@@ -21,7 +21,7 @@ import { Payload } from 'src/module/shared/decorator/param/payload';
 import { Id } from 'src/module/shared/decorator/param/id';
 import { UpdateMe } from 'src/module/user/input/update-me';
 import { RateLimit } from 'src/module/auth/decorator/rate-limit';
-import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
+import { GQLContext } from 'src/module/shared/interface/gql-context';
 import { ListPost } from 'src/module/post/input/list-post';
 import { PostList } from 'src/module/post/model/post-list';
 import { UserList } from 'src/module/user/model/user-list';

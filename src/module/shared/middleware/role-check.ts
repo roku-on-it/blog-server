@@ -1,6 +1,6 @@
 import { FieldMiddleware, MiddlewareContext, NextFn } from '@nestjs/graphql';
 import { User } from 'src/module/user/model/user';
-import { GQLContext } from 'src/module/auth/guard/interface/gql-context';
+import { GQLContext } from 'src/module/shared/interface/gql-context';
 import {
   ForbiddenException,
   NotFoundException,
