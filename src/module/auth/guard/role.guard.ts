@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRole } from 'src/module/user/model/enum/user-role';
 import { User } from 'src/module/user/model/user';
-import { Session } from 'src/module/auth/guard/interface/gql-context';
+import { Session } from 'src/module/shared/interface/gql-context';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
